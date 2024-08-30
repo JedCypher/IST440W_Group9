@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>AIR QUALITY APP</head>
+    <style>
+    @import
+    url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
+
+    #H{
+        width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+        }
+
+        th, td, table{
+            font-size: 50px;
+            border: 1px solid #9b4c4c ;
+            text-align: auto;
+            background-color: #59528f;
+            color: white;
+        }
+
+       
+    </style>
+   E
+    <body>
+    
+    <div id="H">
+<div class="Name"> 
+<nav class="navbar navbar-light" style="background-color:#59528f;">
+<h1 style="color:white; float: center; margin-left: 50px; margin-right: 50px;">Today's Air Quality For:</h1>
+<p style="color:white; float: center; margin-left: 100px; margin-right: 100px" id="ip-address">Your IP: </captions>
+</div>
+
+ <table>
+<tr colspan = "2"></tr>
+<th scope = "col">Air Quality</th>
+<th scope = "col">Data</th>
+
+<tr>
+    <td>AQI</td>
+    <td id="AQI" required placeholder="N/A"></td>
+</tr>
+
+<tr>
+    <td>RH</td>
+    <td required placeholder="N/A"></td>
+</tr>
+
+<tr>
+    <td>DEW POINT</td>
+    <td required placeholder="N/A"></td>
+</tr>
+
+
+<tr>
+    <td>WIND</td>
+    <td required placeholder="N/A"></td>
+</tr>
+
+
+<tr>
+    <td>HCHO</td>
+    <td required placeholder="N/A"></td>
+</tr>
+
+<tr>
+    <td>TEMP</td>
+    <td required placeholder="N/A"></td>
+</tr>
+
+<tr>
+    <td>HUMI</td>
+    <td required placeholder="N/A"></td>
+</tr>
+
+<tr>
+    <td>CO2</td>
+    <td required placeholder="N/A"></td>
+</tr>
+</tr>
+
+</table>
+<span style="font-size: 50px; color: #59528f;" id="datetime"></span><br />
+<span style="font-size: 50px; color:#59528f;" id="displaytime"></span>
+</div>
+
+    </body>
+    <script
+    src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js">
+     
+</script>
+
+    <script>
+var sessionStorage_transfer = function(event){
+                    if(event.key == '0'){localStorage.setItem('0', JSON.stringify(sessionStorage));}
+        
+                    else if(event.key == '0' && !sessionStorage.length){var data = JSON.parse(event.newValue);}
+                  for (var key in data)  {sessionStorage.setItem(key, data[key])}
+                }
+        
+                if(window.addEventListener){
+                    window.addEventListener("0", sessionStorage_transfer, false);
+                }
+                else {
+                    window.attachEvent("0", sessionStorage_transfer);
+                }
+        
+        
+                if(!sessionStorage.length){
+                    localStorage.setItem('0', 'foobar');
+                    localStorage.removeItem('0', 'foobar');
+                }
+            var x = sessionStorage.getItem(0);  
+            console.log(x);
+            document.getElementById("ip-address").innerHTML = x;
+
+        const displaytime = document.querySelector('#displaytime');
+            
+
+        function updateDateTime(){
+            const now = new Date();
+
+        
+            const currentDateTime = now.toLocaleDateString();
+            document.querySelector('#datetime').textContent = currentDateTime;
+           
+            }
+            setInterval(updateDateTime, 1000);
+
+        function showTime(){
+            let time = new Date();
+            displaytime.innerText = time.toLocaleTimeString('en-US', {hour12: false});
+            setTimeout(showTime, 1000);
+        }
+        
+        showTime();
+            
+        
+            $.ajax({
+                method: 'GET',
+                url: 'https://api.weatherbit.io/v2.0/current?city=Brooklyn,NY&key=682f8e11138b477889da9edd1e4f68a0',
+                headers: { 'X-Api-Key': "682f8e11138b477889da9edd1e4f68a0"},
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                success: function(result){
+                    console.log(result);
+                },
+                error: function ajaxError(jqXHR){
+                    console.error('Error: ', jqXHR.responseText);
+                }
+            })
+        
+            </script>
