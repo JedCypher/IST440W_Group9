@@ -24,10 +24,10 @@
     <Head>THE NUMBER ONE AIR QUALITY</Head>
     <body>
      
-<p>Input Location: <input type="text" required placeholder="Philadelphia" id="inputString"></input></p>
+<p>Input Location: <input type="text" focus required placeholder="Philadelphia" id="inputString"></input></p>
 
 
-<a href = "AIR_QUALITY_APP.html" target="AIR_QUALITY_APP.html" onclick="test()"> Check Your Air Quality Now</a>
+<button onclick="test()"> Check Your Air Quality Now</button>
         </div>
 
     </body>
@@ -38,9 +38,14 @@
  function test(){
                 let loc = document.getElementById("inputString");
               let a =  loc.value;
-             sessionStorage.setItem(0, a);
+              if(a==""){alert("Please input your city name."); window.location.href = "AIR_QUALITY_HOME.html";}
+             else {
+              sessionStorage.setItem(0, a);
              console.log(sessionStorage.getItem(0));
- }
+            window.location.href = "AIR_QUALITY_APP.html";
+             }
+                }
+
         var sessionStorage_transfer = function(event){
                     if(event.key == '0'){localStorage.setItem('0', JSON.stringify(sessionStorage));}
         
