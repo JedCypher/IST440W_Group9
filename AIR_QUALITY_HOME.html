@@ -7,10 +7,11 @@
      
         }
 
-        a:visited{color: white;}
-
-        a:link{color: blue;}
-
+        button:hover{
+            background-color: rgb(91, 43, 43);
+            color: white;
+        }
+        
         body{
             background-color: #59528f;
         }
@@ -24,7 +25,7 @@
     <Head>THE NUMBER ONE AIR QUALITY</Head>
     <body>
      
-<p>Input Location: <input type="text" focus required placeholder="Philadelphia" id="inputString"></input></p>
+<p>Input Location: <input type="text" required placeholder="Philadelphia,PA" id="inputString"></input></p>
 
 
 <button onclick="test()"> Check Your Air Quality Now</button>
@@ -37,8 +38,8 @@
 
  function test(){
                 let loc = document.getElementById("inputString");
-              let a =  loc.value;
-              if(a==""){alert("Please input your city name."); window.location.href = "AIR_QUALITY_HOME.html";}
+              let a =  loc.value.trim();
+              if(!a.includes(',')){alert("Please input your 'city name, State'."); window.location.href = "AIR_QUALITY_HOME.html";}
              else {
               sessionStorage.setItem(0, a);
              console.log(sessionStorage.getItem(0));
