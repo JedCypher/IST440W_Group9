@@ -1,15 +1,30 @@
 <DOCtype html>
     <style>
-        #H{
-        margin: auto;
-        width: 50%;
-        padding: 250px;
-     
-        }
 
-        button:hover{
-            background-color: rgb(91, 43, 43);
+        
+      #instruction2 {
+        width: 60%;
+        margin-top: 4px;
+      }
+      #getLocBtn {
+        float: left;
+        margin-top: 0px;
+      }
+ html,
+  body,
+  #viewDiv {
+    padding: auto;
+    margin: auto;
+    height: 99%;
+    width: 99%;
+  }
+
+
+        #Head {
             color: white;
+            margin:auto;
+            padding-left: 40%;
+        
         }
         
         body{
@@ -18,52 +33,95 @@
     </style>
 
    
+<Title>WELCOME TO THE AIR_QUALITY</Title> 
+    <meta charset="utf-8" />
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 
-    <Title>WELCOME TO THE AIR_QUALITY</Title>  
     
-     <div id="H">
-    <Head>THE NUMBER ONE AIR QUALITY</Head>
-    <body>
-     
-<p>Input Location: <input type="text" required placeholder="Philadelphia,PA" id="inputString"></input></p>
-
-
-<button onclick="test()"> Check Your Air Quality Now</button>
-        </div>
-
-    </body>
+   <div id="head"> <Head>THE NUMBER ONE AIR QUALITY</Head></div>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css" />
+        <script src="https://js.arcgis.com/4.30/"></script>
 
     <script>
 
+require([  "esri/Map",
+        "esri/views/MapView", 
+        "esri/rest/locator"], (Map, MapView, locator) => {
+          const locatorUrl = "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer";
 
- function test(){
-                let loc = document.getElementById("inputString");
-              let a =  loc.value.trim();
-              if(!a.includes(',')){alert("Please input your 'city name, State'."); window.location.href = "AIR_QUALITY_HOME.html";}
-             else {
-              sessionStorage.setItem(0, a);
-             console.log(sessionStorage.getItem(0));
-            window.location.href = "AIR_QUALITY_APP.html";
-             }
-                }
+  const myMap = new Map({
+    basemap: "topo"
+  });
+  
+  var view = new MapView({
+    container: "viewDiv",
+    map: myMap,
+    zoom: 4,
+    center: [-80, 50]
+  });
+       view.popupEnabled = false;
+        view.on("click", (event) => {
+            const lat = Math.round(event.mapPoint.latitude*1000)/1000
+            const lon = Math.round(event.mapPoint.longitude*1000)/1000
 
-        var sessionStorage_transfer = function(event){
-                    if(event.key == '0'){localStorage.setItem('0', JSON.stringify(sessionStorage));}
+            view.openPopup({
+              title: lon + ", " + lat,
+              location: event.mapPoint
+            })
+            const params = {
+  location: event.mapPoint
+};
+
+// Execute a reverse geocode using the clicked location
+locator.locationToAddress(locatorUrl, params)
+  
+  .then((response) => {
+    // If an address is successfully found, show it in the popup's content
+    view.popup.content = response.address;
+  })
+  .catch(() => {
+    // If the promise fails and no result is found, show a generic message
+    view.popup.content = "No address was found for this location";
+  });
+        });
         
-                    else if(event.key == '0' && !sessionStorage.length){var data = JSON.parse(event.newValue);}
-                  for (var key in data)  {sessionStorage.setItem(key, data[key])}
-                }
+      });
+        /*
+            var graphic = new Graphic({
+            geometry: {
+              type: "point",
+              latitude: evt.mapPoint.latitude,
+              longitude: evt.mapPoint.longitude,
+              spatialReference: view.spatialReference,
+              query: "AIR_QUALITY_APP.html"
+            },
+
+            symbol: {
+              type: "simple-marker", color: [255, 10, 10],
+              outline: {
+                
+                color: [255, 255, 255],
+                width: 2,
+              },
+            },
+          });
+          view.graphics.removeAll();
+          view.graphics.add(graphic);
+
+          search.search(evt.mapPoint);
+          search.resultGraphicEnabled = false;
         
-                if(window.addEventListener){
-                    window.addEventListener("0", sessionStorage_transfer, false);
-                }
-                else {
-                    window.attachEvent("0", sessionStorage_transfer);
-                }
+    });
+          */       </script>
+    <body>
+
         
         
-                if(!sessionStorage.length){
-                    localStorage.setItem('0', 'foobar');
-                    localStorage.removeItem('0', 'foobar');
-                }
-                 </script>
+        
+        <div id="H">
+        <div id="viewDiv"></div>
+
+
+        </div>
+
+    </body>
