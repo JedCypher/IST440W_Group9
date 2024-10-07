@@ -1,6 +1,30 @@
 <DOCtype html>
+  
     <style>
+      .test{
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted;
+      }
 
+  .test:hover .tooltiptext{
+    visibility: visible;
+  }
+  .test .tooltiptext{
+    visibility: hidden;
+    width: 300px;
+    background-color: black;
+    color: white;
+    text-align: center;
+    padding: 5px, 0;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+  }
+
+  .test:click{
+    visibility: visible;
+  }
         
       #instruction2 {
         width: 60%;
@@ -18,7 +42,10 @@
     height: 99%;
     width: 99%;
   }
+  #output {
 
+    visibility: visible;
+  }
 
         #Head {
             color: white;
@@ -36,90 +63,151 @@
 <Title>WELCOME TO THE AIR_QUALITY</Title> 
     <meta charset="utf-8" />
         <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
-
+        <script
+        src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     
    <div id="head"> <Head>THE NUMBER ONE AIR QUALITY</Head></div>
     <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css" />
         <script src="https://js.arcgis.com/4.30/"></script>
 
     <script>
+var x = 0;
+var y = 0;
+      var outputHTML = "";
+ var data = [
+      {
 
+          label: 'AQI',
+          Data: 'N/A',
+          info: 'AQI Stands for Air Quality. It basically tells how clean the environment is and what associated health effects will be a concern.'
+      },
+      {
+
+label: 'RH',
+ Data: 'N/A',
+ info: 'RH means Relative humidity. A measurement of how much water vapor is in the air that is compared to water vapor at capacity in dependent to current temperature.'
+},
+{
+
+label: 'DEW POINT',
+ Data: 'N/A',
+ info: ''
+},
+
+{
+
+label: 'WIND',
+ Data: 'N/A',
+ info: 'Wind is measured by the horizontal speed and direction of where it had came from.'
+},
+
+{
+
+label: 'HCHO',
+ Data: 'N/A',
+ info: 'HCHO is a known carcinogen, explains how much damage can be inflicted into air quality of indoors'
+},
+{
+
+label: 'TEMP',
+ Data: 'N/A',
+ info: ''
+},
+{
+
+label: 'HUMI',
+ Data: 'N/A',
+ info: 'The meansurement of water vapor in the air. This is a common cause of climate changes'
+},
+
+{
+
+label: 'CO2',
+ Data: 'N/A',
+ info: 'A gas that absorbs and rediate heats. Basically the greenhouse gases that causes the climate change and how warm it feels compared to actuality temperatures.'
+},
+ ];
+outputHTML += "<table style='border:1px #9b4c4c solid' rows width='400'><tbody>";
+ for(let i = 0; i<data.length; i++){
+  outputHTML += "<tr><td style='border:1px #9b4c4c solid'>" + data[i].label + "<div class='test'><span class='tooltiptext'>" + data[i].info +  "</span> <a style= 'border:1px solid'> ?</a></div>" + '</td>'
+                   + "<td style='border:1px #9b4c4c solid'>" + data[i].Data + '</td></tr>';
+ }
+
+ outputHTML += "</tbody></table>";
 require([  "esri/Map",
         "esri/views/MapView", 
-        "esri/rest/locator"], (Map, MapView, locator) => {
+        "esri/rest/locator",
+      "esri/widgets/Search"], (Map, MapView, locator, Search) => {
           const locatorUrl = "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer";
+
+
 
   const myMap = new Map({
     basemap: "topo"
   });
-  
-  var view = new MapView({
+
+  const view = new MapView({
     container: "viewDiv",
     map: myMap,
     zoom: 4,
     center: [-80, 50]
   });
-       view.popupEnabled = false;
-        view.on("click", (event) => {
+  view.popupEnabled = false;
+
+const search = new Search({
+    view: view
+  }); 
+ view.ui.add(search, "top-right");
+ 
+search.on('select-result', (evt) => {
+console.info(evt);
+view.popup.open({
+  location: evt.result.feature.geometry,
+  title: evt.result.name,
+  content: outputHTML
+});
+}); 
+
+view.on("click", (event) => {
+console.log("1");
             const lat = Math.round(event.mapPoint.latitude*1000)/1000
             const lon = Math.round(event.mapPoint.longitude*1000)/1000
-
+            x = lat;
+            y = lon;
             view.openPopup({
-              title: lon + ", " + lat,
-              location: event.mapPoint
+              location: event.mapPoint,
+            
+              
             })
+            
             const params = {
   location: event.mapPoint
 };
-
+document.getElementById('output').innerHTML = outputHTML;
 // Execute a reverse geocode using the clicked location
 locator.locationToAddress(locatorUrl, params)
   
   .then((response) => {
     // If an address is successfully found, show it in the popup's content
-    view.popup.content = response.address;
+    view.popup.title = response.address;
+    view.popup.content =  outputHTML;
   })
   .catch(() => {
     // If the promise fails and no result is found, show a generic message
     view.popup.content = "No address was found for this location";
-  });
+  }); 
+
         });
-        
       });
-        /*
-            var graphic = new Graphic({
-            geometry: {
-              type: "point",
-              latitude: evt.mapPoint.latitude,
-              longitude: evt.mapPoint.longitude,
-              spatialReference: view.spatialReference,
-              query: "AIR_QUALITY_APP.html"
-            },
-
-            symbol: {
-              type: "simple-marker", color: [255, 10, 10],
-              outline: {
-                
-                color: [255, 255, 255],
-                width: 2,
-              },
-            },
-          });
-          view.graphics.removeAll();
-          view.graphics.add(graphic);
-
-          search.search(evt.mapPoint);
-          search.resultGraphicEnabled = false;
-        
-    });
-          */       </script>
+      
+          </script>
     <body>
 
         
         
         
         <div id="H">
-        <div id="viewDiv"></div>
+        <div id="viewDiv"></div><br /><div style="background-color: white; "  id="output"></div>
 
 
         </div>
