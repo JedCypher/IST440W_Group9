@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>WeatherPRO</title>
+        <style>
+            @import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
+
+            #H {
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            th, td, table {
+                font-size: 50px;
+                border: 1px solid #9b4c4c;
+                text-align: auto;
+                background-color: #59528f;
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
+
+
+    <script>
+
+
+    </script>
+
+    <div id="H">
+        <div class="Name">
+            <nav class="navbar navbar-light" style="background-color:#59528f;">
+                <h1 style="color:white; float:center; margin-left: 50px; margin-right: 50px;"
+                's Air Quality For: <span id="Local">Please Enter a Location:</span></h1>
+            </nav>
+        </div>
+
+        <form id="locationForm" method="POST" action="/cgi-bin/Update_JSON.py">
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" required>
+            <label for="state">State:</label>
+            <input type="text" id="state" name="state" required>
+            <label for="zip">Zip Code:</label>
+            <input type="text" id="zip" name="zip" required>
+            <button type="submit">Submit</button>
+        </form>
+<table id="data-output"></table>
+        <table>
+            <tr></tr>
+            <th scope="col">Weather Type</th>
+            <th scope="col">Data</th>
+
+            <tr>
+                <td>UVI</td>
+                <td id="UVI">N/A</td>
+            </tr>
+
+            <tr>
+                <td>Feels Like</td>
+                <td id="RH">N/A</td>
+            </tr>
+
+            <tr>
+                <td>Dew Point</td>
+                <td id="DEW_POINT">N/A</td>
+            </tr>
+
+            <tr>
+                <td>Wind Speed</td>
+                <td id="WIND">N/A</td>
+            </tr>
+
+            <tr>
+                <td>Weather Description</td>
+                <td id="main">N/A</td>
+            </tr>
+
+            <tr>
+                <td>Current Temperature</td>
+                <td id="temp">N/A</td>
+            </tr>
+
+            <tr>
+                <td>Humidity</td>
+                <td id="HUMI">N/A</td>
+            </tr>
+
+            <tr>
+                <td>Current Time</td>
+                <td id="CO2">N/A</td>
+            </tr>
+        </table>
+
+
+    </div>
+
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+$(document).ready(function() {
+
+    $.getJSON('WeatherAPI_Output.json', function(result) {
+        console.log("Parsed JSON Data:", result);
+
+
+        const localdata = result.location_data[0];
+        const weatherData = result.weather_data.current;
+        const weatherDescription = weatherData.weather[0].description;
+        const windData = weatherData.wind_speed;
+
+
+        $('#Local').text(localdata.name + ', ' + localdata.state);
+        $('#temp').text(weatherData.temp + " F" || "N/A");
+        $('#RH').text(weatherData.feels_like + " F" || "N/A");
+        $('#WIND').text(windData + " mph" || "N/A");  // Wind speed
+        $('#HUMI').text(weatherData.humidity + "%" || "N/A");
+        $('#main').text(weatherDescription || "N/A");
+        $('#DEW_POINT').text(weatherData.dew_point ? weatherData.dew_point + " F" : "N/A");
+        $('#UVI').text(weatherData.uvi + " m");
+        $('#CO2').text(new Date().toLocaleTimeString());
+    }).fail(function() {
+    });
+});
+</script>
+
+    </body>
+</html>
