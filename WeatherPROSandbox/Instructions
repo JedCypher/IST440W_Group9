@@ -1,7 +1,0 @@
-How to start WeatherPRO.
-
-We will need to first create a local server inorder for the HTML to acquire the JSON data from the file.
-
-In your IDE's Terminal (powershell or bash) type: python -m http.server --cgi 8081
-
-and to access the site, type this into your default web browser: http://localhost:8081/Weathepro.html
