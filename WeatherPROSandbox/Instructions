@@ -1,0 +1,13 @@
+How to start WeatherPRO.
+In Powershell type: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+This will allow the Powershell script to run and initialize the HTTP Python Server.
+
+NOTE: You will then need to go to Update_JSON and edit line 6 replace the file path to where you installed the folder.
+
+Please run the powershell file "ApplicationStartUp"
+We will need to first create a local server in order for the HTML to acquire the JSON data from the file.
+
+In your IDE's Terminal (powershell or bash) type: python -m http.server --cgi 8081
+
+NOTE: You must have Python 12.0 installed and You must add exceptions for python in your computer's firewall
+and to access the site, type this into your default web browser: http://localhost:8081/Weathepro.html
