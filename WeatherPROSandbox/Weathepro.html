@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-
         <title>WeatherPRO</title>
         <style>
             @import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
-
+            a:link 
+            {color: red;} 
+            
+            
+            a:visited 
+            
+            {color: white;} 
             #H {
                 width: fit-content;
                 margin-left: auto;
@@ -33,20 +38,19 @@
         <div class="Name">
             <nav class="navbar navbar-light" style="background-color:#59528f;">
                 <h1 style="color:white; margin-left: 50px; margin-right: 50px;">
-                's Air Quality For: <span id="Local">Please Enter a Location:</span></h1>
+                's Air Quality For: <span id="Local">Please Enter a Location:</span><a href="C:\IST440W_Group9-main\IST440W_Group9-main\AIR_QUALITY_HOME.html">TEST</a></h1>
             </nav>
         </div>
 
-        <form id="locationForm" method="POST" action="/cgi-bin/Update_JSON.py">
+        <form id="locationForm" method="GET" action="/cgi-bin/Update_JSON.py">
             <label for="city">City:</label>
             <input type="text" id="city" name="city" required>
             <label for="state">State:</label>
             <input type="text" id="state" name="state" required>
             <label for="zip">Zip Code:</label>
             <input type="text" id="zip" name="zip" required>
-            <button type="submit" onclick="myFunction();">Submit</button>
+            <button type="submit">Submit</button>
         </form>
-        <a href="./IST440W_Group-main/IST440W_Group9-main/AIR_QUALITY_HOME.html">TEST</a>
 <table id="data-output"></table>
         <table>
             <tr></tr>
@@ -100,12 +104,12 @@
 
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
 
 $(document).ready(function() {
 
-    $.getJSON('WeatherAPI_Output.json', function (result) {
+    $.getJSON('WeatherAPI_Output.json', function(result) {
         console.log("Parsed JSON Data:", result);
 
 
@@ -124,35 +128,9 @@ $(document).ready(function() {
         $('#DEW_POINT').text(weatherData.dew_point ? weatherData.dew_point + " F" : "N/A");
         $('#UVI').text(weatherData.uvi + " m");
         $('#CO2').text(new Date().toLocaleTimeString());
-    }).fail(function () {
-    })
+    }).fail(function() {
+    });
 });
-
-function myFunction(){
-
-    $.getJSON('WeatherAPI_Output.json', function (result) {
-        console.log("Parsed JSON Data:", result);
-
-
-        const localdata = result.location_data[0];
-        const weatherData = result.weather_data.current;
-        const weatherDescription = weatherData.weather[0].description;
-        const windData = weatherData.wind_speed;
-
-
-        $('#Local').text(localdata.name + ', ' + localdata.state);
-        $('#temp').text(weatherData.temp + " F" || "N/A");
-        $('#RH').text(weatherData.feels_like + " F" || "N/A");
-        $('#WIND').text(windData + " mph" || "N/A");  // Wind speed
-        $('#HUMI').text(weatherData.humidity + "%" || "N/A");
-        $('#main').text(weatherDescription || "N/A");
-        $('#DEW_POINT').text(weatherData.dew_point ? weatherData.dew_point + " F" : "N/A");
-        $('#UVI').text(weatherData.uvi + " m");
-        $('#CO2').text(new Date().toLocaleTimeString());
-    }).fail(function () {
-    })
-}
-
 </script>
 
     </body>
