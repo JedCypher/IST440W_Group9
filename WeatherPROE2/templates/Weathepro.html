@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>WeatherPRO</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
+
+        #H {
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .table2 {
+            display: grid;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        th, td, table {
+            font-size: 50px;
+            border: 1px solid #9b4c4c;
+            text-align: center;
+            background-color: #59528f;
+            color: white;
+        }
+        .information-i {
+            display: inline-block;
+            margin-left: 10px;
+            width: 50px;
+            height: 50px;
+            background-color: #4c8b9b;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 50px;
+            font-size: 40px;
+            cursor: pointer;
+            position: relative;
+        }
+        .popupbox {
+            visibility: hidden;
+            width: 200px;
+            background-color: #FFA07A;
+            color: #fff;
+            text-align: left;
+            padding: 10px;
+            border-radius: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 18px;
+        }
+        .information-i:hover .popupbox {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="H">
+        <div class="Name">
+            <nav class="navbar navbar-light" style="background-color:#59528f;">
+                <h1 style="color:white; margin-left: 250px; margin-right: 100px; font-size: 30pt;">WeatherPRO</h1>
+                <h2 style="color:white; margin-left: 50px; margin-right: 50px;">
+                    WeatherPRO Locator: <span id="Local">Please Enter a Location:</span>
+                </h2>
+            </nav>
+        </div>
+
+        <form id="locationForm" method="post">
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" required>
+            <label for="state">State:</label>
+            <input type="text" id="state" name="state" required>
+            <label for="zip">Zip Code:</label>
+            <input type="text" id="zip" name="zip" required>
+            <button type="submit">Submit</button>
+        </form>
+
+        <div class="table2">
+            <table id="data-output">
+                <tr><th>Weather Type</th><th>Data</th></tr>
+                <tr><td>UVI</td><td id="UVI">N/A<div class="information-i">i<div class="popupbox">UV Index measures the amount of ultraviolet radiation in that area.</div></div></td></tr>
+                <tr><td>Feels Like</td><td id="RH">N/A<div class="information-i">i<div class="popupbox">This represents how the weather might feel based on wind speed and other factors.</div></div></td></tr>
+                <tr><td>Dew Point</td><td id="DEW_POINT">N/A<div class="information-i">i<div class="popupbox">The temperature at which vapors form.</div></div></td></tr>
+                <tr><td>Wind Speed</td><td id="WIND">N/A<div class="information-i">i<div class="popupbox">Current speed of wind in miles per hour.</div></div></td></tr>
+                <tr><td>Weather Description</td><td id="main">N/A<div class="information-i">i<div class="popupbox">Current weather conditions. EXP. Cloudy Skies, Rain, Sunny, etc.</div></div></td></tr>
+                <tr><td>Current Temperature</td><td id="temp">N/A<div class="information-i">i<div class="popupbox">The actual temperature in that area.</div></div></td></tr>
+                <tr><td>Humidity</td><td id="HUMI">N/A<div class="information-i">i<div class="popupbox">This measures the amount of water vapor in the air.</div></div></td></tr>
+                <tr><td>Current WeatherPRO Time</td><td id="CO2">N/A<div class="information-i">i<div class="popupbox">The current local time of the server.</div></div></td></tr>
+            </table>
+        </div>
+    </div>
+
+<script>
+    document.getElementById("locationForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        console.log("JavaScript is handling form submission.");
+
+        const formData = new FormData(this);
+
+        fetch("/get_weather", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => {
+            console.log("Response received from /get_weather.");
+            return response.json();
+        })
+        .then(data => {
+            console.log("Data received:", data);
+            if (data.error) {
+                console.error("Error fetching data:", data.error);
+                return;
+            }
+
+            // Populate data only in the text content, keeping the surrounding HTML structure intact
+            document.getElementById("Local").textContent = data.location_data[0].name + ', ' + data.location_data[0].state;
+            document.getElementById("temp").childNodes[0].nodeValue = data.weather_data.current.temp + " F";
+            document.getElementById("RH").childNodes[0].nodeValue = data.weather_data.current.feels_like + " F";
+            document.getElementById("UVI").childNodes[0].nodeValue = data.weather_data.current.uvi;
+            document.getElementById("DEW_POINT").childNodes[0].nodeValue = data.weather_data.current.dew_point + " F";
+            document.getElementById("WIND").childNodes[0].nodeValue = data.weather_data.current.wind_speed + " mph";
+            document.getElementById("HUMI").childNodes[0].nodeValue = data.weather_data.current.humidity + " %";
+            document.getElementById("main").childNodes[0].nodeValue = data.weather_data.current.weather[0].description;
+            setInterval(() => document.getElementById("CO2").childNodes[0].nodeValue = new Date().toLocaleTimeString(), 1000);
+        })
+        
+    });
+</script>
+
+</body>
+</html>
