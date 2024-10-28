@@ -153,10 +153,10 @@
             </tr>
 
             <tr>
-                <td>Current WeatherPRO Time</td>
+                <td>Current User Time</td>
                 <td id="CO2">N/A
                 <div class="information-i">i
-                        <div class="popupbox">The current local time of the server.</div>
+                        <div class="popupbox">The current local time of the user.</div>
                     </div>
                 </td>
             </tr>
@@ -170,35 +170,32 @@
 <script>
     document.getElementById("locationForm").addEventListener("submit", function(event) {
         event.preventDefault();
-        console.log("JavaScript is handling form submission.");
+        
 
         const formData = new FormData(this);
 
         fetch("/get_weather", {
-            method: "POST",
+            method: "post",
             body: formData
         })
         .then(response => {
-            console.log("Response received from /get_weather.");
             return response.json();
         })
         .then(data => {
-            console.log("Data received:", data);
             if (data.error) {
-                console.error("Error fetching data:", data.error);
                 return;
             }
 
-            
-            document.getElementById("Local").textContent = data.location_data[0].name + ', ' + data.location_data[0].state;
-            document.getElementById("temp").childNodes[0].nodeValue = data.weather_data.current.temp + " F";
-            document.getElementById("RH").childNodes[0].nodeValue = data.weather_data.current.feels_like + " F";
-            document.getElementById("UVI").childNodes[0].nodeValue = data.weather_data.current.uvi;
-            document.getElementById("DEW_POINT").childNodes[0].nodeValue = data.weather_data.current.dew_point + " F";
-            document.getElementById("WIND").childNodes[0].nodeValue = data.weather_data.current.wind_speed + " mph";
-            document.getElementById("HUMI").childNodes[0].nodeValue = data.weather_data.current.humidity + " %";
-            document.getElementById("main").childNodes[0].nodeValue = data.weather_data.current.weather[0].description;
-            setInterval(() => document.getElementById("CO2").childNodes[0].nodeValue = new Date().toLocaleTimeString(), 1000);
+    
+         document.getElementById("Local").textContent = data.location_data[0].name + ', ' + data.location_data[0].state;
+         document.getElementById("temp").textContent = data.weather_data.current.temp + " F";
+            document.getElementById("RH").textContent = data.weather_data.current.feels_like + " F";
+            document.getElementById("UVI").textContent = data.weather_data.current.uvi;
+            document.getElementById("DEW_POINT").textContent = data.weather_data.current.dew_point + " F";
+            document.getElementById("WIND").textContent = data.weather_data.current.wind_speed + " mph";
+            document.getElementById("HUMI").textContent = data.weather_data.current.humidity + " %";
+            document.getElementById("main").textContent = data.weather_data.current.weather[0].description;
+            setInterval(() => document.getElementById("CO2").textContent = new Date().toLocaleTimeString(), 1000);
         })
         
     });
