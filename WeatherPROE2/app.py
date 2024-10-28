@@ -2,7 +2,7 @@ import os
 import requests
 import json
 from flask import Flask, render_template, request, jsonify
-from API_KEYS import api_key  # Ensure this file contains your actual API key
+from API_KEYS import api_key  
 
 app = Flask(__name__)
 application = app
