@@ -152,6 +152,9 @@
                 return;
             }
 
+			const Jdata = JSON.stringify(data);
+			localStorage.setItem("0", Jdata);
+            
             document.getElementById("Local").textContent = data.location_data[0].name + ', ' + data.location_data[0].state;
             document.getElementById("temp").childNodes[0].nodeValue = data.weather_data.current.temp + " F";
             document.getElementById("RH").childNodes[0].nodeValue = data.weather_data.current.feels_like + " F";
