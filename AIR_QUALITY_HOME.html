@@ -74,66 +74,66 @@ body,
       <script
       src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   
- <div id="head"> <Head>WeatherPRO</Head><br><a href="C:\IST440W_Group9-main\IST440W_Group9-main\WeatherPROSandbox\Weathepro.html">TEST</a></div>
+ <div id="head"> <Head>WeatherPRO</Head><br><a href="./waapp/tmp/Weathepro.html">TEST</a></div>
   <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css" />
       <script src="https://js.arcgis.com/4.30/"></script>
 
   <script>
-
+var x = JSON.parse(localStorage.getItem('0'));
+            console.log(x);
+            var lon = x.weather_data.lon;
+            var lat = x.weather_data.lat;
+            
+            //-----------------------------------------// 
+              var uvi = x.weather_data.current.dew_point;
+              var FL = x.weather_data.current.feels_like;
+            var dew = x.weather_data.current.dew_point;
+            var wind = x.weather_data.current.wind_speed;
+            var Ctemp = x.weather_data.current.temp;
+            var humi = x.weather_data.current.humidity;
     var outputHTML = "";
-    var outputHTML1 = "";
+
 var data = [
     {
 
-        label: 'AQI',
-        Data: 'N/A',
-        info: 'AQI Stands for Air Quality. It basically tells how clean the environment is and what associated health effects will be a concern.'
+        label: 'UVI',
+        Data: uvi,
+        info: ''
     },
     {
 
-label: 'RH',
-Data: 'N/A',
-info: 'RH means Relative humidity. A measurement of how much water vapor is in the air that is compared to water vapor at capacity in dependent to current temperature.'
+label: 'Feels Like',
+Data: FL,
+info: ''
 },
 {
 
 label: 'DEW POINT',
-Data: 'N/A',
+Data: dew,
 info: ''
 },
 
 {
 
-label: 'WIND',
-Data: 'N/A',
+label: 'WIND Speed',
+Data: wind,
 info: 'Wind is measured by the horizontal speed and direction of where it had came from.'
 },
 
-{
 
-label: 'HCHO',
-Data: 'N/A',
-info: 'HCHO is a known carcinogen, explains how much damage can be inflicted into air quality of indoors'
-},
 {
 
 label: 'TEMP',
-Data: 'N/A',
+Data: Ctemp,
 info: ''
 },
 {
 
 label: 'HUMI',
-Data: 'N/A',
+Data: humi,
 info: 'The meansurement of water vapor in the air. This is a common cause of climate changes'
 },
 
-{
-
-label: 'CO2',
-Data: 'N/A',
-info: 'A gas that absorbs and rediate heats. Basically the greenhouse gases that causes the climate change and how warm it feels compared to actuality temperatures.'
-},
 ];
 outputHTML += "<table id='myTable' style='border:1px #9b4c4c solid' rows width='400'><tbody>";
 for(let i = 0; i<data.length; i++){
@@ -141,76 +141,14 @@ outputHTML += "<tr><td style='border:1px #9b4c4c solid'>" + data[i].label + "<di
                  + "<td style='border:1px #9b4c4c solid'>" + data[i].Data + '</td></tr>';
 }
 
-//IMPORTANT: This code only works if the condition's city is 'Brooklyn!'
-outputHTML1 += "</tbody></table>";
-
-var data = [
-    {
-
-        label: 'AQI',
-        Data: '50',
-        info: 'AQI Stands for Air Quality. It basically tells how clean the environment is and what associated health effects will be a concern.'
-    },
-    {
-
-label: 'RH',
-Data: '100',
-info: 'RH means Relative humidity. A measurement of how much water vapor is in the air that is compared to water vapor at capacity in dependent to current temperature.'
-},
-{
-
-label: 'DEW POINT',
-Data: '70',
-info: ''
-},
-
-{
-
-label: 'WIND',
-Data: '5.01mph with SW gust of 7mph',
-info: 'Wind is measured by the horizontal speed and direction of where it had came from.'
-},
-
-{
-
-label: 'HCHO',
-Data: 'Unknown',
-info: 'HCHO is a known carcinogen, explains how much damage can be inflicted into air quality of indoors'
-},
-{
-
-label: 'TEMP',
-Data: '70.36',
-info: ''
-},
-{
-
-label: 'HUMI',
-Data: '64',
-info: 'The meansurement of water vapor in the air. This is a common cause of climate changes'
-},
-
-{
-
-label: 'CO2',
-Data: 'N/A',
-info: 'A gas that absorbs and rediate heats. Basically the greenhouse gases that causes the climate change and how warm it feels compared to actuality temperatures.'
-},
-];
-outputHTML1 += "<table id='myTable' style='border:1px #9b4c4c solid' rows width='400'><tbody>";
-for(let i = 0; i<data.length; i++){
-outputHTML1 += "<tr><td style='border:1px #9b4c4c solid'>" + data[i].label + "<div class='test'><span class='tooltiptext'>" + data[i].info +  "</span> <a style= 'border:1px solid'> ?</a></div>" + '</td>'
-                 + "<td style='border:1px #9b4c4c solid'>" + data[i].Data + '</td></tr>';
-}
-
-outputHTML1 += "</tbody></table>";
 require([  "esri/Map",
       "esri/views/MapView", 
       "esri/rest/locator",
-    "esri/widgets/Search"], (Map, MapView, locator, Search) => {
+      "esri/geometry/Point",
+    "esri/widgets/Search"], (Map, MapView, locator, Point, Search) => {
         const locatorUrl = "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer";
 
-
+        const point = new Point({x: lon, y: lat});
 
 const myMap = new Map({
   basemap: "topo"
@@ -220,9 +158,15 @@ const view = new MapView({
   container: "viewDiv",
   map: myMap,
   zoom: 4,
-  center: [-80, 50]
+  center: [lon, lat]
 });
 view.popupEnabled = false;
+
+view.openPopup({
+location: point,
+title: x.location_data[0].name + " ," + x.location_data[0].state + " ," + x.location_data[0].country,
+content: outputHTML
+});
 
 const search = new Search({
   view: view
