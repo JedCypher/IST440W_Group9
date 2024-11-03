@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css">
+    <script src="https://js.arcgis.com/4.30/"></script>
+    <style>
+
+        body {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+            color: blue;
+        }
+
+        .header {
+            background-color: #32ac83;
+            height: 120px;
+            padding: 5px;
+            text-align: center;
+            color: #3259ac;
+        }
+
+
+
+
+
+        /*
+        .test {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted;
+        }
+
+        .test .tooltiptext {
+            visibility: hidden;
+            width: 300px;
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 5px;
+            border-radius: 6px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .test:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        */
+
+
+    </style>
+</head>
+
+<div class="header">
+    <h1 style="margin-bottom: -20px;">
+        WeatherPRO Map
+    </h1>
+    <h2 style="color: white; font-family: Arial; text-align: center;">
+    <a style="background-color:#04165c; border-radius: 15px; margin-bottom: -40px; padding: 8px; color: lightblue;" href="/">Go Back to WeatherPRO Dashboard</a>
+    </h2>
+</div>
+<div class="dropdown">
+    <label style="color: black; margin-left: 800px;" for="select">Select Overlay: </label>
+    <select id="selectOverlay">
+        <option value="temp_new">Temperature</option>
+        <option value="clouds_new">Cloud Coverage</option>
+        <option value="wind_new">Wind Speed</option>
+        <option value="pressure_new">Sea Level Pressure</option>
+    </select>
+</div>
+
+
+
+    <div id="viewDiv" style="height: 950px;"></div>
+
+    <script>
+        require(["esri/Map", "esri/views/MapView", "esri/layers/WebTileLayer"], (Map, MapView, WebTileLayer) => {
+
+
+
+            const myMap = new Map({
+                basemap: "streets-night-vector"
+            });
+/*
+            const templayer = new WebTileLayer({
+                urlTemplate: "https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=ac4759706d906841a39f9c7d4cceb73d",
+                opacity: 0.9
+            });
+
+            myMap.add(templayer);
+
+            const perclayer = new WebTileLayer({
+                urlTemplate: "https://tile.openweathermap.org/map/percipitation_new/{z}/{x}/{y}.png?appid=ac4759706d906841a39f9c7d4cceb73d",
+                opacity: 0.9
+            });
+
+            myMap.add(perclayer);
+*/
+            const view = new MapView({
+                container: "viewDiv",
+                map: myMap,
+                center: [-80, 50],
+                zoom: 4
+            });
+
+            function updateWeatherOverlay(overlayType){
+                const WeatherdataLayer = new WebTileLayer({
+                    urlTemplate: "https://tile.openweathermap.org/map/" + overlayType + "/{z}/{x}/{y}.png?appid=ac4759706d906841a39f9c7d4cceb73d",
+                    opacity: 1
+                });
+                myMap.removeAll();
+                myMap.add(WeatherdataLayer);
+            }
+        document.getElementById("selectOverlay").addEventListener("change", function(event) {
+            updateWeatherOverlay(event.target.value);
+        });
+
+            updateWeatherOverlay(document.getElementById("selectOverlay").value);
+
+            fetch('/static/WeatherAPI_Output.json')
+                .then(response => response.json())
+                .then(data => {
+                    const locationData = data.location_data[0];
+                    const weatherData = data.weather_data.current;
+                    const weatherDes = data.weather_data.current.weather[0].description
+
+                    view.center = [locationData.lon, locationData.lat];
+                    view.zoom = 12;
+
+
+                    /*
+                    document.getElementById("UVI").childNodes[0].nodeValue = weatherData.uvi || 'N/A';
+                    document.getElementById("RH").childNodes[0].nodeValue = weatherData.feels_like || 'N/A';
+                    document.getElementById("DEW_POINT").childNodes[0].nodeValue = weatherData.dew_point || 'N/A';
+                    document.getElementById("WIND").childNodes[0].nodeValue = weatherData.wind_speed || 'N/A';
+                    document.getElementById("temp").childNodes[0].nodeValue = weatherData.temp || 'N/A';
+                    document.getElementById("HUMI").childNodes[0].nodeValue = weatherData.humidity || 'N/A';
+                    */
+
+
+                    view.center = [locationData.lon, locationData.lat];
+                    view.zoom = 12;
+
+
+                    let popupContent = "<table style='border:1px solid'>";
+                    popupContent += `<tr><td>Weather Description</td><td>${weatherDes || 'N/A'}</td></tr>`;
+                    popupContent += `<tr><td>UVI</td><td>${weatherData.uvi || 'N/A'}</td></tr>`;
+                    popupContent += `<tr><td>Feels Like</td><td>${weatherData.feels_like || 'N/A'}</td></tr>`;
+                    popupContent += `<tr><td>Humidity</td><td>${weatherData.humidity + "%" || 'N/A'}</td></tr>`;
+                    popupContent += `<tr><td>Dew Point</td><td>${weatherData.dew_point + " F"|| 'N/A'}</td></tr>`;
+                    popupContent += `<tr><td>Wind Speed</td><td>${weatherData.wind_speed + " MPH" || 'N/A'}</td></tr>`;
+                    popupContent += `<tr><td>Temperature</td><td>${weatherData.temp + " F" || 'N/A'}</td></tr>`;
+                    popupContent += "</table>";
+
+
+                    view.popup.open({
+                        title: locationData.name,
+                        content: popupContent,
+                        location: { latitude: locationData.lat, longitude: locationData.lon },
+
+                    });
+                })
+        });
+    </script>
+</body>
+</html>
