@@ -1,0 +1,7 @@
+Welcome to WeatherPRO.  Please check out our Website http://weatherpro.pro
+
+In order to start WeatherPRO locally, you first need to install Flask by entering "pip install flask," if its not already installed.
+
+The second item you will need to install is requests by entering "pip install requests"
+
+Once they are installed, you can run app.py which will run the code and provide you a URL where you can access the application.

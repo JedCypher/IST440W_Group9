@@ -1,0 +1,15 @@
+Welcome to WeatherPRO. Please Visit Our Website https://weatherpro.pro/ For a seamless experience.
+
+In order for the code to work, you will first need to go to the terminal in Pycharm or whatever IDE you are using and type:
+
+pip install requests
+pip install flask
+
+This will install the proper modules into the python script and get the code working!
+
+https://www.jetbrains.com/help/pycharm/run-debug-configuration-flask-server.html
+
+This guide will also help in getting the flask server to run on the app.py code for the html UI to appear.
+
+
+By: Arbenit Vucetovic, Jed Elijah Galvo, Osama Salem
